@@ -1,0 +1,112 @@
+LINUX SERVER HEALTH CHECK
+=========================
+
+Purpose
+-------
+This script collects basic health information from a Linux server and writes
+the results to a timestamped text report.
+
+The initial target is Rocky Linux. The script may also work on other Linux
+distributions, but it has not yet been tested on a live server.
+
+What the script collects
+------------------------
+- Hostname: the system's host name.
+- Report timestamp: the date and time when the report is generated.
+- Operating system: distribution name from /etc/os-release, when available.
+- Kernel version: the running Linux kernel version.
+- Architecture: system architecture reported by uname.
+- Uptime: how long the system has been running.
+- CPU information: number of logical CPUs and load averages for 1, 5, and
+  15 minutes, when the relevant commands or files are available.
+- Memory: output from the free -h command, when available.
+- Disk usage: filesystem usage from df -hP, excluding tmpfs and devtmpfs.
+- Failed systemd services: output from systemctl --failed, when systemctl
+  is available and the command can query the system.
+
+Report file
+-----------
+The script creates a file with a name similar to:
+
+    linux-health-report-20261018-120000.txt
+
+The date and time in the name are generated when the script runs. The report
+is saved in the current working directory from which the script is launched.
+If the script is launched from a different directory, the report is saved
+there, not necessarily beside the script.
+
+What you need to edit
+---------------------
+No edits are required for a basic run. The script collects information from
+the Linux system on which it is executed.
+
+You may customize the script later to add warning thresholds, select services
+to check, or choose a different report location. Review any changes before
+running them.
+
+Requirements
+------------
+- Bash.
+- Common Linux utilities such as hostname, uname, date, df, and uptime.
+- The free command for memory information.
+- systemctl for failed systemd service information, when systemd is available.
+- Read permissions for the files and commands used by the script.
+
+How to run
+----------
+1. Download linux-server-health-check.sh to the Linux server.
+2. Review the script before executing it.
+3. Open a terminal in the directory containing the downloaded script.
+4. Make the script executable:
+
+       chmod +x linux-server-health-check.sh
+
+5. Run the script:
+
+       ./linux-server-health-check.sh
+
+6. Read the generated linux-health-report-*.txt report in the current working
+   directory.
+
+Permissions and limitations
+---------------------------
+- The script is designed to perform read-only checks and does not intentionally
+  change system configuration or restart services.
+- Some service information may be unavailable depending on permissions and
+  the system's init system.
+- The load average is not a CPU utilization percentage.
+- Disk output shows filesystem capacity and usage; the script does not apply
+  a low-disk-space threshold.
+- Memory is displayed using the output of free -h; the script does not create
+  a custom memory percentage or threshold.
+- The script reports failed systemd services but does not determine whether
+  each failure is business-critical.
+- Command availability and output may vary between distributions.
+
+Security and safe use
+---------------------
+- Run only on systems you are authorized to administer.
+- Review the script before execution and test it in a lab environment first.
+- Do not add passwords, tokens, private keys, or other secrets to the script.
+- Do not publish internal hostnames, IP addresses, system details, or
+  confidential company information in a public repository.
+- Do not assume the script has been validated for production use.
+
+Testing status
+--------------
+The script has been published to GitHub, but it has not yet been executed or
+validated on a live Rocky Linux virtual machine. Treat it as an initial
+portfolio project until testing has been completed.
+
+Suggested future improvements
+-----------------------------
+- Add configurable warning thresholds for disk and memory.
+- Calculate CPU and memory utilization metrics.
+- Add optional checks for selected services.
+- Add command exit-code handling and more structured error reporting.
+- Add tests on Rocky Linux and Ubuntu Server and document any differences.
+
+Note
+----
+This document describes the current version of the script. Update this guide
+whenever the script's behavior changes.
